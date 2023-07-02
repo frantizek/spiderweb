@@ -15,8 +15,14 @@ args = parser.parse_args()
 
 
 def plural(animal_singular):
-    return animal_singular+"s"
-
+    if animal_singular.endswith('s'):
+        return animal_singular
+    elif animal_singular.endswith('z'):
+        return animal_singular.replace('z', 'ces')
+    elif animal_singular.endswith('i') or animal_singular.endswith('n') or animal_singular.endswith('r') or animal_singular.endswith('l'):
+        return animal_singular + 'es'
+    else:
+        return animal_singular+"s"
 
 def main(iteraciones, animal):
     for i in range(1, int(iteraciones)+1):
