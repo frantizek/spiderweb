@@ -1,6 +1,6 @@
 import argparse
 
-from numero_letras import numero_a_letras
+from src.spiderweb.numero_letras import numero_a_letras
 
 parser = argparse.ArgumentParser(
     description="Ennumera la cantidad de animales que se "
