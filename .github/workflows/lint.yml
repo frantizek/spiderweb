@@ -1,0 +1,54 @@
+# .github/workflows/lint.yml
+name: Lint and Type Check
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+          # REMOVE THIS LINE: cache: 'uv'  <-- This causes the error!
+          # We will cache uv's directory manually below.
+
+      - name: Install uv
+        run: |
+          pip install uv
+
+      - name: Create virtual environment with uv
+        run: uv venv
+
+      # NEW STEP: Cache uv's global cache directory
+      - name: Cache UV dependencies
+        uses: actions/cache@v3 # Use v3 or v4
+        with:
+          path: ~/.cache/uv # This is where uv stores its downloaded packages and build artifacts
+          key: ${{ runner.os }}-uv-${{ hashFiles('pyproject.toml') }} # Key based on OS and pyproject.toml changes
+          restore-keys: |
+            ${{ runner.os }}-uv- # Fallback if exact key isn't found
+
+      - name: Install Dependencies
+        run: |
+          # This command will now benefit from the cached uv downloads
+          uv pip install -e ".[dev]"
+
+      - name: Run Ruff Linter
+        run: |
+          uv run ruff check .
+
+      - name: Run Ruff Formatter Check
+        run: |
+          uv run ruff format --check .
+
+      - name: Run Mypy Type Checker
+        run: |
+          uv run mypy .
