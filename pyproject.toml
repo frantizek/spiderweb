@@ -5,3 +5,57 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = []
+
+[project.optional-dependencies]
+dev = [
+    "ruff~=0.1",          # Linter and Formatter
+    "mypy~=1.7",          # Type Checker
+    "pre-commit~=3.6",    # Git Hooks
+    "pytest~=7.4",        # Testing Framework
+    "pytest-cov>=4",
+    "black>=23",
+    "flake8>=6",
+]
+
+[tool.ruff]
+line-length = 88
+target-version = "py310" # Set to your project's target Python version
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "W", "B", "C4", "A", "UP", "PL", "SIM", "PTH", "TID"]
+ignore = [] # Add rules to ignore project-wide if necessary
+
+exclude = [".git", "__pycache__", "build", "dist", ".venv"]
+fixable = ["ALL"]
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401"]
+"tests/Ⓑ/*.py" = ["S101"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+
+[tool.mypy]
+python_version = "3.10" # Match your project's target Python version
+warn_return_any = true
+warn_unused_configs = true
+warn_unused_ignores = true
+disallow_untyped_defs = true
+no_implicit_optional = true
+strict_optional = true
+show_error_codes = true
+pretty = true
+explicit_package_bases = true
+
+exclude = ["venv/", "build/", "dist/", ".venv/"]
+
+[[tool.mypy.overrides]]
+module = "requests.*" # Example: if requests stubs are missing/incomplete
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+addopts = "--verbose --cov=project_name --cov-report=term-missing"
